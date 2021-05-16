@@ -1,4 +1,4 @@
-package com.example.covid_war_admin
+package com.sastrauniv.covidwaradmin
 
 import io.flutter.embedding.android.FlutterActivity
 

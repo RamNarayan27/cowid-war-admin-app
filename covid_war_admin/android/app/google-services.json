@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "730431736233",
+    "project_id": "covid-war-admin",
+    "storage_bucket": "covid-war-admin.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:730431736233:android:5b867c41baca026546dcb8",
+        "android_client_info": {
+          "package_name": "com.sastrauniv.covidwaradmin"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "730431736233-g1ijge8k1536gipep0r2i2gtpm5ipa1v.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.sastrauniv.covidwaradmin",
+            "certificate_hash": "878b62bc0069af14a312ebfe034ee67204e0cc8d"
+          }
+        },
+        {
+          "client_id": "730431736233-g2568qfcseqn1srt4asfkbbgdbhjgnn4.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCiBFTbsWtbIHzfaAXXan5siXtsxNTCPGs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "730431736233-g2568qfcseqn1srt4asfkbbgdbhjgnn4.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
