@@ -186,7 +186,6 @@ class _MyStatefulWidget extends State<MyStatefulWidget> {
                           ElevatedButton(
                             child: Text('Edit'),
                             onPressed: () {
-                              // ! get the new edited values and update them accordingly in the form above
                               Navigator.push(
                                   context,
                                   MaterialPageRoute(
@@ -248,7 +247,7 @@ class _MyStatefulWidget extends State<MyStatefulWidget> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          // ! get the values and make a new entry
+          // ! firebase will update it here
           Fluttertoast.showToast(
               msg: 'Test toast for fab',
               toastLength: Toast.LENGTH_SHORT,
