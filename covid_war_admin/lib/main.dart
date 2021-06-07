@@ -5,6 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'editform.dart';
 import 'newentry.dart';
+import 'newleads.dart';
 import 'dart:developer' as developer;
 
 void main() async {
@@ -126,11 +127,11 @@ class _MyStatefulWidget extends State<MyStatefulWidget> {
                                       name: 'deleted entry');
                                 });
                                 setState(() {
-                                    switcher = false;
-                                    selectedItems.clear();
-                                    appbar =
-                                        AppBar(title: Text('Covid War Room'));
-                                  });
+                                  switcher = false;
+                                  selectedItems.clear();
+                                  appbar =
+                                      AppBar(title: Text('Covid War Room'));
+                                });
                               },
                             )
                           ],
@@ -347,12 +348,11 @@ class _MyStatefulWidget extends State<MyStatefulWidget> {
   void _getANewItem(_selectedIndex) {
     setState(() {
       if (_selectedIndex == 0) {
-        // todo : add a new route here to add a new value
         Navigator.push(
             context, MaterialPageRoute(builder: (content) => NewEntry()));
       } else {
-        entries2.add('Fire');
-        colorCodes2.add(400);
+        Navigator.push(
+            context, MaterialPageRoute(builder: (context) => NewLeadsEntry()));
       }
     });
   }

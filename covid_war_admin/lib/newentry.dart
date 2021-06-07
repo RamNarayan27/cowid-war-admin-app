@@ -162,7 +162,6 @@ class AddHospitalState extends State<AddHospital> {
               ),
               ElevatedButton(
                 onPressed: () async {
-                  // todo : add to firebase here
                   int totalbeds = int.parse(icuController.text) +
                       int.parse(ventController.text) +
                       int.parse(oBedsController.text) +
