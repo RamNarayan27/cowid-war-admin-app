@@ -5,16 +5,13 @@ import 'main.dart';
 class EditFormPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-        
-    HospitalData hospital = ModalRoute.of(context)!.settings.arguments as HospitalData;
-    return MaterialApp(
-      title: 'Edit Form',
-      home: Scaffold(
-        appBar: AppBar(
-          title: Text('Edit Form'),
-        ),
-        body: EditForm(hdata: hospital),
+    HospitalData hospital =
+        ModalRoute.of(context)!.settings.arguments as HospitalData;
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Edit Form'),
       ),
+      body: EditForm(hdata: hospital),
     );
   }
 }
@@ -197,7 +194,10 @@ class EditFormState extends State<EditForm> {
                       .doc(hdata.docId)
                       .set(hdata.toJson());
 
-                  Navigator.push(context,MaterialPageRoute(builder: (context) => MyApp()));
+                  Navigator.pop(context);
+
+                  // Navigator.push(context,
+                  //     MaterialPageRoute(builder: (context) => MyApp()));
                 },
                 child: Text('Submit'),
               )

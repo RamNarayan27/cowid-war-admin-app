@@ -6,6 +6,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'editform.dart';
 import 'newentry.dart';
 import 'newleads.dart';
+import 'editleads.dart';
 import 'dart:developer' as developer;
 
 void main() async {
@@ -58,6 +59,36 @@ class HospitalData {
   }
 }
 
+class LeadsData {
+  String? leadName;
+  String? leadCity;
+  String? status;
+  String? type;
+  String? docID;
+  int? phoneNumber;
+
+  LeadsData(this.leadName, this.leadCity, this.status, this.type, this.docID,
+      this.phoneNumber);
+
+  LeadsData.fromJSON(jsonData) {
+    this.leadName = jsonData['name'];
+    this.leadCity = jsonData['city'];
+    this.status = jsonData['status'];
+    this.type = jsonData['type'];
+    this.docID = jsonData.id;
+    this.phoneNumber = jsonData['phone-number'];
+  }
+  Map<String, dynamic> toJson() {
+    return {
+      "name": this.leadCity,
+      "city": this.leadCity,
+      "status": this.status,
+      "phone-number": this.phoneNumber,
+      "type": this.type
+    };
+  }
+}
+
 class MyApp extends StatelessWidget {
   static const String _title = 'Covid War Room';
 
@@ -80,9 +111,12 @@ class _MyStatefulWidget extends State<MyStatefulWidget> {
   // final entries = <String>['Apollo', 'Billroth', 'Jaruko'];
   final entries2 = <String>['dlsfjasdf', 'adfasfasfda', 'asdlfhas;dfasf'];
   final List<int> colorCodes2 = <int>[600, 500, 100];
-  List<int> selectedItems = [];
-  bool switcher = false;
+  List<int> selectedItemsBeds = [];
+  List<int> selectedItemsLeads = [];
+  bool leadsSwitcher = false;
+  bool bedsSwitcher = false;
   PreferredSizeWidget appbar = AppBar(title: Text('Covid War Room'));
+  // PreferredSizeWidget appbarLeads = AppBar(title: Text('Covid War Room'));
 
   Widget _buildList() {
     if (_selectedIndex == 0) {
@@ -102,9 +136,9 @@ class _MyStatefulWidget extends State<MyStatefulWidget> {
                   onLongPress: () {
                     // add the widget to the list here
                     setState(() {
-                      selectedItems.add(index);
-                      switcher = true;
-                      if (switcher) {
+                      selectedItemsBeds.add(index);
+                      bedsSwitcher = true;
+                      if (bedsSwitcher) {
                         appbar = AppBar(
                           title: Text('Delete Hospitals'),
                           actions: [
@@ -112,7 +146,7 @@ class _MyStatefulWidget extends State<MyStatefulWidget> {
                               icon: Icon(Icons.delete),
                               onPressed: () {
                                 //delete firebase entry here
-                                selectedItems.forEach((element) async {
+                                selectedItemsBeds.forEach((element) async {
                                   await FirebaseFirestore.instance
                                       .runTransaction(
                                           (Transaction myTransaction) async {
@@ -127,8 +161,8 @@ class _MyStatefulWidget extends State<MyStatefulWidget> {
                                       name: 'deleted entry');
                                 });
                                 setState(() {
-                                  switcher = false;
-                                  selectedItems.clear();
+                                  bedsSwitcher = false;
+                                  selectedItemsBeds.clear();
                                   appbar =
                                       AppBar(title: Text('Covid War Room'));
                                 });
@@ -141,11 +175,11 @@ class _MyStatefulWidget extends State<MyStatefulWidget> {
                     // final snackBar =
                     //     SnackBar(content: Text('Yay! A SnackBar!'));
                     // ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                    developer.log(selectedItems.toString(),
+                    developer.log(selectedItemsBeds.toString(),
                         name: 'onlongpress works');
                   },
-                  child: (switcher)
-                      ? (selectedItems.contains(index))
+                  child: (bedsSwitcher)
+                      ? (selectedItemsBeds.contains(index))
                           ? ListTileTheme(
                               // represents the list that is present in the list
                               // ontap should remove the goddamn thing from the list
@@ -162,15 +196,15 @@ class _MyStatefulWidget extends State<MyStatefulWidget> {
                                     '# Total Beds : ${snapshot.data.docs[index]['total-beds']}'),
                                 onTap: () {
                                   setState(() {
-                                    selectedItems.remove(index);
+                                    selectedItemsBeds.remove(index);
                                     // final snackBar = SnackBar(
                                     //     content: Text('Yay! A SnackBar!'));
                                     // ScaffoldMessenger.of(context)
                                     //     .showSnackBar(snackBar);
-                                    developer.log(selectedItems.toString(),
+                                    developer.log(selectedItemsBeds.toString(),
                                         name: 'ontap remove works');
-                                    if (selectedItems.isEmpty) {
-                                      switcher = false;
+                                    if (selectedItemsBeds.isEmpty) {
+                                      bedsSwitcher = false;
                                       appbar =
                                           AppBar(title: Text('Covid War Room'));
                                     }
@@ -193,12 +227,12 @@ class _MyStatefulWidget extends State<MyStatefulWidget> {
                                     '# Total Beds : ${snapshot.data.docs[index]['total-beds']}'),
                                 onTap: () {
                                   setState(() {
-                                    selectedItems.add(index);
+                                    selectedItemsBeds.add(index);
                                     // final snackBar = SnackBar(
                                     //     content: Text('Yay! A SnackBar!'));
                                     // ScaffoldMessenger.of(context)
                                     //     .showSnackBar(snackBar);
-                                    developer.log(selectedItems.toString(),
+                                    developer.log(selectedItemsBeds.toString(),
                                         name: 'ontap add works');
                                   });
                                 },
@@ -325,17 +359,246 @@ class _MyStatefulWidget extends State<MyStatefulWidget> {
         },
       );
     } else {
-      return ListView.builder(
-          // ! finish this part also
-          padding: const EdgeInsets.all(0),
-          itemCount: entries2.length,
-          itemBuilder: (BuildContext context, int index) {
-            return Container(
-              height: 50,
-              color: Colors.amber[colorCodes2[index]],
-              child: Center(child: Text('Entry ${entries2[index]}')),
-            );
-          });
+      return StreamBuilder(
+        stream: FirebaseFirestore.instance
+            .collection('test')
+            .doc('leads')
+            .collection('data')
+            .snapshots(),
+        builder: (context, AsyncSnapshot snapshot) {
+          if (!snapshot.hasData) return const Text('Loading...');
+          return ListView.builder(
+              padding: const EdgeInsets.all(0),
+              itemCount: snapshot.data.size,
+              itemBuilder: (BuildContext context, int index) {
+                return InkWell(
+                    onLongPress: () {
+                      // add the widget to the list here
+                      setState(() {
+                        selectedItemsLeads.add(index);
+                        leadsSwitcher = true;
+                        if (leadsSwitcher) {
+                          appbar = AppBar(
+                            title: Text('Delete Leads'),
+                            actions: [
+                              IconButton(
+                                icon: Icon(Icons.delete),
+                                onPressed: () {
+                                  // ! todo : delete from firebase here
+                                  //delete firebase entry here
+                                  // selectedItemsBeds.forEach((element) async {
+                                  //   await FirebaseFirestore.instance
+                                  //       .runTransaction(
+                                  //           (Transaction myTransaction) async {
+                                  //     await myTransaction.delete(
+                                  //         snapshot.data.docs[element].reference);
+                                  //   });
+                                  selectedItemsLeads.forEach((element) async {
+                                    await FirebaseFirestore.instance
+                                        .runTransaction(
+                                            (Transaction myTransaction) async {
+                                      await myTransaction.delete(snapshot
+                                          .data.docs[element].reference);
+                                    });
+                                    // final snackBar =
+                                    //     SnackBar(content: Text('${element}'));
+                                    // ScaffoldMessenger.of(context)
+                                    //     .showSnackBar(snackBar);
+                                    developer.log(element.toString(),
+                                        name: 'deleted entry');
+                                  });
+                                  final snackBar = SnackBar(
+                                      content: Text('Yay! A SnackBar!'));
+                                  ScaffoldMessenger.of(context)
+                                      .showSnackBar(snackBar);
+                                  setState(() {
+                                    leadsSwitcher = false;
+                                    selectedItemsLeads.clear();
+                                    appbar =
+                                        AppBar(title: Text('Covid War Room'));
+                                  });
+                                },
+                              )
+                            ],
+                          );
+                        }
+                      });
+                      // final snackBar =
+                      //     SnackBar(content: Text('Yay! A SnackBar!'));
+                      // ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                      developer.log(selectedItemsLeads.toString(),
+                          name: 'onlongpress works');
+                    },
+                    child: (leadsSwitcher)
+                        ? (selectedItemsLeads.contains(index))
+                            ? ListTileTheme(
+                                tileColor: Colors.black12,
+                                child: ListTile(
+                                  leading: Icon(Icons.people),
+                                  title:
+                                      Text(snapshot.data.docs[index]['name']),
+                                  subtitle: Text(
+                                      'City ${snapshot.data.docs[index]['city']}'),
+                                  onTap: () {
+                                    setState(() {
+                                      selectedItemsLeads.remove(index);
+                                      // final snackBar = SnackBar(
+                                      //     content: Text('Yay! A SnackBar!'));
+                                      // ScaffoldMessenger.of(context)
+                                      //     .showSnackBar(snackBar);
+                                      developer.log(
+                                          selectedItemsLeads.toString(),
+                                          name: 'ontap remove works');
+                                      if (selectedItemsLeads.isEmpty) {
+                                        leadsSwitcher = false;
+                                        appbar = AppBar(
+                                            title: Text('Covid War Room'));
+                                      }
+                                    });
+                                  },
+                                ),
+                              )
+                            : ListTileTheme(
+                                child: ListTile(
+                                  leading: Icon(
+                                    Icons.people,
+                                    // color: Colors.red,
+                                    // size: 56.0,
+                                  ),
+                                  title:
+                                      Text(snapshot.data.docs[index]['name']),
+                                  subtitle: Text(
+                                      'City : ${snapshot.data.docs[index]['city']}'),
+                                  onTap: () {
+                                    setState(() {
+                                      selectedItemsLeads.add(index);
+                                      // final snackBar = SnackBar(
+                                      //     content: Text('Yay! A SnackBar!'));
+                                      // ScaffoldMessenger.of(context)
+                                      //     .showSnackBar(snackBar);
+                                      developer.log(
+                                          selectedItemsLeads.toString(),
+                                          name: 'ontap add works');
+                                    });
+                                  },
+                                ),
+                              )
+                        : ExpansionTile(
+                            leading: (snapshot.data.docs[index]['status'] ==
+                                    'verified')
+                                ? Icon(
+                                    Icons.check_circle,
+                                    color: Colors.green,
+                                    size: 50.0,
+                                  )
+                                : (snapshot.data.docs[index]['status'] ==
+                                        'unverified')
+                                    ? Icon(
+                                        Icons.help_outlined,
+                                        color: Colors.amber,
+                                        size: 50.0,
+                                      )
+                                    : Icon(
+                                        Icons.cancel,
+                                        color: Colors.red,
+                                        size: 50.0,
+                                      ),
+                            title: Text(snapshot.data.docs[index]['name']),
+                            subtitle: Text(
+                                'City : ${snapshot.data.docs[index]['city']}'),
+                            trailing: Icon(Icons.arrow_drop_down_rounded),
+                            children: [
+                              Container(
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: 50, vertical: 4),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text('Lead Name'),
+                                    Text('${snapshot.data.docs[index]['name']}')
+                                  ],
+                                ),
+                              ),
+                              Container(
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: 50, vertical: 4),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text('City'),
+                                    Text('${snapshot.data.docs[index]['city']}')
+                                  ],
+                                ),
+                              ),
+                              Container(
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: 50, vertical: 4),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text('Phone Number'),
+                                    Text(
+                                        '${snapshot.data.docs[index]['phone-number']}')
+                                  ],
+                                ),
+                              ),
+                              Container(
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: 50, vertical: 4),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text('Status'),
+                                    Text(
+                                        '${snapshot.data.docs[index]['status']}')
+                                  ],
+                                ),
+                              ),
+                              Container(
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: 50, vertical: 4),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text('Type'),
+                                    Text('${snapshot.data.docs[index]['type']}')
+                                  ],
+                                ),
+                              ),
+                              Container(
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: 50, vertical: 4),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    ElevatedButton(
+                                      child: Text('Edit'),
+                                      onPressed: () {
+                                        Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    EditLeadsPage(),
+                                                settings: RouteSettings(
+                                                  arguments: LeadsData.fromJSON(
+                                                      snapshot
+                                                          .data.docs[index]),
+                                                )));
+                                      },
+                                    )
+                                  ],
+                                ),
+                              )
+                            ],
+                          ));
+              });
+        },
+      );
     }
   }
 
@@ -374,7 +637,7 @@ class _MyStatefulWidget extends State<MyStatefulWidget> {
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(Icons.king_bed_rounded),
-            label: 'Bed',
+            label: 'Beds',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.people),
@@ -382,7 +645,7 @@ class _MyStatefulWidget extends State<MyStatefulWidget> {
           ),
         ],
         currentIndex: _selectedIndex,
-        selectedItemColor: Colors.amber[800],
+        selectedItemColor: Colors.amber[800], //todo : change it to the
         onTap: _onItemTapped,
       ),
     );
