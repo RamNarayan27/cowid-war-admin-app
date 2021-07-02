@@ -16,6 +16,9 @@ dependencies:
   cloud_firestore: 
   cupertino_icons: ^1.0.2
   fluttertoast: ^8.0.7
+  bubble: ^1.2.1
+  super_tooltip: ^1.0.1
+  # simple_tooltip: ^0.1.16
 
 dev_dependencies:
   flutter_test:

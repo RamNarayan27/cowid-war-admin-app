@@ -1,5 +1,8 @@
 // todo : add a search functionality based on hospital
 
+import 'package:bubble/bubble.dart';
+// import 'package:super_tooltip/super_tooltip.dart';
+// import 'package:simple_tooltip/simple_tooltip.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -109,14 +112,22 @@ class MyStatefulWidget extends StatefulWidget {
 class _MyStatefulWidget extends State<MyStatefulWidget> {
   int _selectedIndex = 0;
   // final entries = <String>['Apollo', 'Billroth', 'Jaruko'];
-  final entries2 = <String>['dlsfjasdf', 'adfasfasfda', 'asdlfhas;dfasf'];
-  final List<int> colorCodes2 = <int>[600, 500, 100];
+  // final entries2 = <String>['dlsfjasdf', 'adfasfasfda', 'asdlfhas;dfasf'];
+  // final List<int> colorCodes2 = <int>[600, 500, 100];
+  final keyUnverified = GlobalKey();
+  // final keyVerified = GlobalKey();
+  // final keyDead = GlobalKey();
+  // late Size sizeUnverified;
+  Offset? positionUnverified;
   List<int> selectedItemsBeds = [];
   List<int> selectedItemsLeads = [];
   bool leadsSwitcher = false;
   bool bedsSwitcher = false;
-  PreferredSizeWidget appbar = AppBar(title: Text('Covid War Room'));
-  // PreferredSizeWidget appbarLeads = AppBar(title: Text('Covid War Room'));
+  late OverlayEntry entry;
+
+  int toggle = 0;
+  PreferredSizeWidget appbarLeads = AppBar(title: Text('Covid War Room'));
+  PreferredSizeWidget appbarBeds = AppBar(title: Text('Covid War Room'));
 
   Widget _buildList() {
     if (_selectedIndex == 0) {
@@ -126,11 +137,11 @@ class _MyStatefulWidget extends State<MyStatefulWidget> {
             .doc('beds')
             .collection('data')
             .snapshots(),
-        builder: (context, AsyncSnapshot snapshot) {
-          if (!snapshot.hasData) return const Text('Loading...');
+        builder: (context, AsyncSnapshot snapshot1) {
+          if (!snapshot1.hasData) return const Text('Loading...');
           return ListView.builder(
               padding: const EdgeInsets.all(0),
-              itemCount: snapshot.data.size,
+              itemCount: snapshot1.data.size,
               itemBuilder: (BuildContext context, int index) {
                 return InkWell(
                   onLongPress: () {
@@ -139,7 +150,7 @@ class _MyStatefulWidget extends State<MyStatefulWidget> {
                       selectedItemsBeds.add(index);
                       bedsSwitcher = true;
                       if (bedsSwitcher) {
-                        appbar = AppBar(
+                        appbarBeds = AppBar(
                           title: Text('Delete Hospitals'),
                           actions: [
                             IconButton(
@@ -151,7 +162,7 @@ class _MyStatefulWidget extends State<MyStatefulWidget> {
                                       .runTransaction(
                                           (Transaction myTransaction) async {
                                     await myTransaction.delete(
-                                        snapshot.data.docs[element].reference);
+                                        snapshot1.data.docs[element].reference);
                                   });
                                   // final snackBar =
                                   //     SnackBar(content: Text('${element}'));
@@ -163,7 +174,7 @@ class _MyStatefulWidget extends State<MyStatefulWidget> {
                                 setState(() {
                                   bedsSwitcher = false;
                                   selectedItemsBeds.clear();
-                                  appbar =
+                                  appbarBeds =
                                       AppBar(title: Text('Covid War Room'));
                                 });
                               },
@@ -172,17 +183,12 @@ class _MyStatefulWidget extends State<MyStatefulWidget> {
                         );
                       }
                     });
-                    // final snackBar =
-                    //     SnackBar(content: Text('Yay! A SnackBar!'));
-                    // ScaffoldMessenger.of(context).showSnackBar(snackBar);
                     developer.log(selectedItemsBeds.toString(),
                         name: 'onlongpress works');
                   },
                   child: (bedsSwitcher)
                       ? (selectedItemsBeds.contains(index))
                           ? ListTileTheme(
-                              // represents the list that is present in the list
-                              // ontap should remove the goddamn thing from the list
                               tileColor: Colors.black12,
                               child: ListTile(
                                 leading: Icon(
@@ -190,22 +196,18 @@ class _MyStatefulWidget extends State<MyStatefulWidget> {
                                   color: Colors.red,
                                   size: 56.0,
                                 ),
-                                title: Text(
-                                    snapshot.data.docs[index]['Hospital Name']),
+                                title: Text(snapshot1.data.docs[index]
+                                    ['Hospital Name']),
                                 subtitle: Text(
-                                    '# Total Beds : ${snapshot.data.docs[index]['total-beds']}'),
+                                    '# Total Beds : ${snapshot1.data.docs[index]['total-beds']}'),
                                 onTap: () {
                                   setState(() {
                                     selectedItemsBeds.remove(index);
-                                    // final snackBar = SnackBar(
-                                    //     content: Text('Yay! A SnackBar!'));
-                                    // ScaffoldMessenger.of(context)
-                                    //     .showSnackBar(snackBar);
                                     developer.log(selectedItemsBeds.toString(),
                                         name: 'ontap remove works');
                                     if (selectedItemsBeds.isEmpty) {
                                       bedsSwitcher = false;
-                                      appbar =
+                                      appbarBeds =
                                           AppBar(title: Text('Covid War Room'));
                                     }
                                   });
@@ -213,25 +215,19 @@ class _MyStatefulWidget extends State<MyStatefulWidget> {
                               ),
                             )
                           : ListTileTheme(
-                              // represents the list that is not present
-                              // ontap should add the index into the list
                               child: ListTile(
                                 leading: Icon(
                                   Icons.local_hospital_rounded,
                                   color: Colors.red,
                                   size: 56.0,
                                 ),
-                                title: Text(
-                                    snapshot.data.docs[index]['Hospital Name']),
+                                title: Text(snapshot1.data.docs[index]
+                                    ['Hospital Name']),
                                 subtitle: Text(
-                                    '# Total Beds : ${snapshot.data.docs[index]['total-beds']}'),
+                                    '# Total Beds : ${snapshot1.data.docs[index]['total-beds']}'),
                                 onTap: () {
                                   setState(() {
                                     selectedItemsBeds.add(index);
-                                    // final snackBar = SnackBar(
-                                    //     content: Text('Yay! A SnackBar!'));
-                                    // ScaffoldMessenger.of(context)
-                                    //     .showSnackBar(snackBar);
                                     developer.log(selectedItemsBeds.toString(),
                                         name: 'ontap add works');
                                   });
@@ -245,9 +241,9 @@ class _MyStatefulWidget extends State<MyStatefulWidget> {
                             size: 56.0,
                           ),
                           title:
-                              Text(snapshot.data.docs[index]['Hospital Name']),
+                              Text(snapshot1.data.docs[index]['Hospital Name']),
                           subtitle: Text(
-                              '# Total Beds : ${snapshot.data.docs[index]['total-beds']}'),
+                              '# Total Beds : ${snapshot1.data.docs[index]['total-beds']}'),
                           trailing: Icon(Icons.arrow_drop_down_rounded),
                           children: [
                             Container(
@@ -259,7 +255,7 @@ class _MyStatefulWidget extends State<MyStatefulWidget> {
                                 children: [
                                   Text('Hospital Name'),
                                   Text(
-                                      '${snapshot.data.docs[index]['Hospital Name']}')
+                                      '${snapshot1.data.docs[index]['Hospital Name']}')
                                 ],
                               ),
                             ),
@@ -272,7 +268,7 @@ class _MyStatefulWidget extends State<MyStatefulWidget> {
                                 children: [
                                   Text('# Total Beds'),
                                   Text(
-                                      '${snapshot.data.docs[index]['total-beds']}')
+                                      '${snapshot1.data.docs[index]['total-beds']}')
                                 ],
                               ),
                             ),
@@ -284,7 +280,7 @@ class _MyStatefulWidget extends State<MyStatefulWidget> {
                                     MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text('# ICU'),
-                                  Text('${snapshot.data.docs[index]['icu']}')
+                                  Text('${snapshot1.data.docs[index]['icu']}')
                                 ],
                               ),
                             ),
@@ -297,7 +293,7 @@ class _MyStatefulWidget extends State<MyStatefulWidget> {
                                 children: [
                                   Text('# Ventilator'),
                                   Text(
-                                      '${snapshot.data.docs[index]['ventilator']}')
+                                      '${snapshot1.data.docs[index]['ventilator']}')
                                 ],
                               ),
                             ),
@@ -310,7 +306,7 @@ class _MyStatefulWidget extends State<MyStatefulWidget> {
                                 children: [
                                   Text('# O2 Beds'),
                                   Text(
-                                      '${snapshot.data.docs[index]['oxy-beds']}')
+                                      '${snapshot1.data.docs[index]['oxy-beds']}')
                                 ],
                               ),
                             ),
@@ -323,7 +319,7 @@ class _MyStatefulWidget extends State<MyStatefulWidget> {
                                 children: [
                                   Text('# Normal Beds'),
                                   Text(
-                                      '${snapshot.data.docs[index]['normal-beds']}')
+                                      '${snapshot1.data.docs[index]['normal-beds']}')
                                 ],
                               ),
                             ),
@@ -344,7 +340,7 @@ class _MyStatefulWidget extends State<MyStatefulWidget> {
                                               settings: RouteSettings(
                                                 arguments:
                                                     HospitalData.fromJSON(
-                                                        snapshot
+                                                        snapshot1
                                                             .data.docs[index]),
                                               )));
                                     },
@@ -365,11 +361,11 @@ class _MyStatefulWidget extends State<MyStatefulWidget> {
             .doc('leads')
             .collection('data')
             .snapshots(),
-        builder: (context, AsyncSnapshot snapshot) {
-          if (!snapshot.hasData) return const Text('Loading...');
+        builder: (context, AsyncSnapshot snapshot2) {
+          if (!snapshot2.hasData) return const Text('Loading...');
           return ListView.builder(
               padding: const EdgeInsets.all(0),
-              itemCount: snapshot.data.size,
+              itemCount: snapshot2.data.size,
               itemBuilder: (BuildContext context, int index) {
                 return InkWell(
                     onLongPress: () {
@@ -378,7 +374,7 @@ class _MyStatefulWidget extends State<MyStatefulWidget> {
                         selectedItemsLeads.add(index);
                         leadsSwitcher = true;
                         if (leadsSwitcher) {
-                          appbar = AppBar(
+                          appbarLeads = AppBar(
                             title: Text('Delete Leads'),
                             actions: [
                               IconButton(
@@ -397,7 +393,7 @@ class _MyStatefulWidget extends State<MyStatefulWidget> {
                                     await FirebaseFirestore.instance
                                         .runTransaction(
                                             (Transaction myTransaction) async {
-                                      await myTransaction.delete(snapshot
+                                      await myTransaction.delete(snapshot2
                                           .data.docs[element].reference);
                                     });
                                     // final snackBar =
@@ -414,7 +410,7 @@ class _MyStatefulWidget extends State<MyStatefulWidget> {
                                   setState(() {
                                     leadsSwitcher = false;
                                     selectedItemsLeads.clear();
-                                    appbar =
+                                    appbarLeads =
                                         AppBar(title: Text('Covid War Room'));
                                   });
                                 },
@@ -436,9 +432,9 @@ class _MyStatefulWidget extends State<MyStatefulWidget> {
                                 child: ListTile(
                                   leading: Icon(Icons.people),
                                   title:
-                                      Text(snapshot.data.docs[index]['name']),
+                                      Text(snapshot2.data.docs[index]['name']),
                                   subtitle: Text(
-                                      'City ${snapshot.data.docs[index]['city']}'),
+                                      'City ${snapshot2.data.docs[index]['city']}'),
                                   onTap: () {
                                     setState(() {
                                       selectedItemsLeads.remove(index);
@@ -451,7 +447,7 @@ class _MyStatefulWidget extends State<MyStatefulWidget> {
                                           name: 'ontap remove works');
                                       if (selectedItemsLeads.isEmpty) {
                                         leadsSwitcher = false;
-                                        appbar = AppBar(
+                                        appbarLeads = AppBar(
                                             title: Text('Covid War Room'));
                                       }
                                     });
@@ -466,9 +462,9 @@ class _MyStatefulWidget extends State<MyStatefulWidget> {
                                     // size: 56.0,
                                   ),
                                   title:
-                                      Text(snapshot.data.docs[index]['name']),
+                                      Text(snapshot2.data.docs[index]['name']),
                                   subtitle: Text(
-                                      'City : ${snapshot.data.docs[index]['city']}'),
+                                      'City : ${snapshot2.data.docs[index]['city']}'),
                                   onTap: () {
                                     setState(() {
                                       selectedItemsLeads.add(index);
@@ -484,28 +480,225 @@ class _MyStatefulWidget extends State<MyStatefulWidget> {
                                 ),
                               )
                         : ExpansionTile(
-                            leading: (snapshot.data.docs[index]['status'] ==
+                            leading: (snapshot2.data.docs[index]['status'] ==
                                     'verified')
-                                ? Icon(
-                                    Icons.check_circle,
-                                    color: Colors.green,
-                                    size: 50.0,
-                                  )
-                                : (snapshot.data.docs[index]['status'] ==
+                                ? IconButton(
+                                    icon: Icon(
+                                      Icons.check_circle,
+                                      color: Colors.green,
+                                      size: 50.0,
+                                    ),
+                                    onPressed: () => showDialog(
+                                        context: context,
+                                        builder: (BuildContext context) =>
+                                            AlertDialog(
+                                                title:
+                                                    const Text('Change Status'),
+                                                content: Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .spaceBetween,
+                                                  children: [
+                                                    IconButton(
+                                                      icon: Icon(
+                                                        Icons.check_circle,
+                                                        color: Colors.green,
+                                                        size: 50,
+                                                      ),
+                                                      onPressed: () {
+                                                        // ! change the code here to update firebase
+                                                        final snackBar = SnackBar(
+                                                            content: Text(
+                                                                'Yay! A SnackBar!'));
+                                                        ScaffoldMessenger.of(
+                                                                context)
+                                                            .showSnackBar(
+                                                                snackBar);
+                                                      },
+                                                    ),
+                                                    IconButton(
+                                                      icon: Icon(
+                                                        Icons.help_outlined,
+                                                        color: Colors.amber,
+                                                        size: 50.0,
+                                                      ),
+                                                      onPressed: () {
+                                                        // ! change the code here to update firebase
+                                                        final snackBar = SnackBar(
+                                                            content: Text(
+                                                                'Yay! A SnackBar!'));
+                                                        ScaffoldMessenger.of(
+                                                                context)
+                                                            .showSnackBar(
+                                                                snackBar);
+                                                      },
+                                                    ),
+                                                    IconButton(
+                                                      icon: Icon(
+                                                        Icons.cancel,
+                                                        color: Colors.red,
+                                                        size: 50.0,
+                                                      ),
+                                                      onPressed: () {
+                                                        // ! change the code here to update firebase
+                                                        final snackBar = SnackBar(
+                                                            content: Text(
+                                                                'Yay! A SnackBar!'));
+                                                        ScaffoldMessenger.of(
+                                                                context)
+                                                            .showSnackBar(
+                                                                snackBar);
+                                                      },
+                                                    ),
+                                                  ],
+                                                ))))
+                                : (snapshot2.data.docs[index]['status'] ==
                                         'unverified')
-                                    ? Icon(
-                                        Icons.help_outlined,
-                                        color: Colors.amber,
-                                        size: 50.0,
+                                    ? IconButton(
+                                        icon: Icon(
+                                          Icons.help_outlined,
+                                          color: Colors.amber,
+                                          size: 50.0,
+                                        ),
+                                        onPressed: () => showDialog(
+                                            context: context,
+                                            builder: (BuildContext context) =>
+                                                AlertDialog(
+                                                    title: const Text(
+                                                        'Change Status'),
+                                                    content: Row(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .spaceBetween,
+                                                      children: [
+                                                        IconButton(
+                                                          icon: Icon(
+                                                            Icons.check_circle,
+                                                            color: Colors.green,
+                                                            size: 50,
+                                                          ),
+                                                          onPressed: () {
+                                                            // ! change the code here to update firebase
+                                                            final snackBar = SnackBar(
+                                                                content: Text(
+                                                                    'Yay! A SnackBar!'));
+                                                            ScaffoldMessenger
+                                                                    .of(context)
+                                                                .showSnackBar(
+                                                                    snackBar);
+                                                          },
+                                                        ),
+                                                        IconButton(
+                                                          icon: Icon(
+                                                            Icons.help_outlined,
+                                                            color: Colors.amber,
+                                                            size: 50.0,
+                                                          ),
+                                                          onPressed: () {
+                                                            // ! change the code here to update firebase
+                                                            final snackBar = SnackBar(
+                                                                content: Text(
+                                                                    'Yay! A SnackBar!'));
+                                                            ScaffoldMessenger
+                                                                    .of(context)
+                                                                .showSnackBar(
+                                                                    snackBar);
+                                                          },
+                                                        ),
+                                                        IconButton(
+                                                          icon: Icon(
+                                                            Icons.cancel,
+                                                            color: Colors.red,
+                                                            size: 50.0,
+                                                          ),
+                                                          onPressed: () {
+                                                            // ! change the code here to update firebase
+                                                            final snackBar = SnackBar(
+                                                                content: Text(
+                                                                    'Yay! A SnackBar!'));
+                                                            ScaffoldMessenger
+                                                                    .of(context)
+                                                                .showSnackBar(
+                                                                    snackBar);
+                                                          },
+                                                        ),
+                                                      ],
+                                                    ))),
                                       )
-                                    : Icon(
-                                        Icons.cancel,
-                                        color: Colors.red,
-                                        size: 50.0,
+                                    : IconButton(
+                                        icon: Icon(
+                                          Icons.cancel,
+                                          color: Colors.red,
+                                          size: 50.0,
+                                        ),
+                                        onPressed: () => showDialog(
+                                            context: context,
+                                            builder: (BuildContext context) =>
+                                                AlertDialog(
+                                                    title: const Text(
+                                                        'Change Status'),
+                                                    content: Row(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .spaceBetween,
+                                                      children: [
+                                                        IconButton(
+                                                          icon: Icon(
+                                                            Icons.check_circle,
+                                                            color: Colors.green,
+                                                            size: 50,
+                                                          ),
+                                                          onPressed: () {
+                                                            // ! change the code here to update firebase
+                                                            final snackBar = SnackBar(
+                                                                content: Text(
+                                                                    'Yay! A SnackBar!'));
+                                                            ScaffoldMessenger
+                                                                    .of(context)
+                                                                .showSnackBar(
+                                                                    snackBar);
+                                                          },
+                                                        ),
+                                                        IconButton(
+                                                          icon: Icon(
+                                                            Icons.help_outlined,
+                                                            color: Colors.amber,
+                                                            size: 50.0,
+                                                          ),
+                                                          onPressed: () {
+                                                            // ! change the code here to update firebase
+                                                            final snackBar = SnackBar(
+                                                                content: Text(
+                                                                    'Yay! A SnackBar!'));
+                                                            ScaffoldMessenger
+                                                                    .of(context)
+                                                                .showSnackBar(
+                                                                    snackBar);
+                                                          },
+                                                        ),
+                                                        IconButton(
+                                                          icon: Icon(
+                                                            Icons.cancel,
+                                                            color: Colors.red,
+                                                            size: 50.0,
+                                                          ),
+                                                          onPressed: () {
+                                                            // ! change the code here to update firebase
+                                                            final snackBar = SnackBar(
+                                                                content: Text(
+                                                                    'Yay! A SnackBar!'));
+                                                            ScaffoldMessenger
+                                                                    .of(context)
+                                                                .showSnackBar(
+                                                                    snackBar);
+                                                          },
+                                                        ),
+                                                      ],
+                                                    ))),
                                       ),
-                            title: Text(snapshot.data.docs[index]['name']),
+                            title: Text(snapshot2.data.docs[index]['name']),
                             subtitle: Text(
-                                'City : ${snapshot.data.docs[index]['city']}'),
+                                'City : ${snapshot2.data.docs[index]['city']}'),
                             trailing: Icon(Icons.arrow_drop_down_rounded),
                             children: [
                               Container(
@@ -516,7 +709,8 @@ class _MyStatefulWidget extends State<MyStatefulWidget> {
                                       MainAxisAlignment.spaceBetween,
                                   children: [
                                     Text('Lead Name'),
-                                    Text('${snapshot.data.docs[index]['name']}')
+                                    Text(
+                                        '${snapshot2.data.docs[index]['name']}')
                                   ],
                                 ),
                               ),
@@ -528,7 +722,8 @@ class _MyStatefulWidget extends State<MyStatefulWidget> {
                                       MainAxisAlignment.spaceBetween,
                                   children: [
                                     Text('City'),
-                                    Text('${snapshot.data.docs[index]['city']}')
+                                    Text(
+                                        '${snapshot2.data.docs[index]['city']}')
                                   ],
                                 ),
                               ),
@@ -541,7 +736,7 @@ class _MyStatefulWidget extends State<MyStatefulWidget> {
                                   children: [
                                     Text('Phone Number'),
                                     Text(
-                                        '${snapshot.data.docs[index]['phone-number']}')
+                                        '${snapshot2.data.docs[index]['phone-number']}')
                                   ],
                                 ),
                               ),
@@ -554,7 +749,7 @@ class _MyStatefulWidget extends State<MyStatefulWidget> {
                                   children: [
                                     Text('Status'),
                                     Text(
-                                        '${snapshot.data.docs[index]['status']}')
+                                        '${snapshot2.data.docs[index]['status']}')
                                   ],
                                 ),
                               ),
@@ -566,7 +761,8 @@ class _MyStatefulWidget extends State<MyStatefulWidget> {
                                       MainAxisAlignment.spaceBetween,
                                   children: [
                                     Text('Type'),
-                                    Text('${snapshot.data.docs[index]['type']}')
+                                    Text(
+                                        '${snapshot2.data.docs[index]['type']}')
                                   ],
                                 ),
                               ),
@@ -586,7 +782,7 @@ class _MyStatefulWidget extends State<MyStatefulWidget> {
                                                     EditLeadsPage(),
                                                 settings: RouteSettings(
                                                   arguments: LeadsData.fromJSON(
-                                                      snapshot
+                                                      snapshot2
                                                           .data.docs[index]),
                                                 )));
                                       },
@@ -601,6 +797,34 @@ class _MyStatefulWidget extends State<MyStatefulWidget> {
       );
     }
   }
+
+  OverlayEntry createOverLayEntry() {
+    // RenderBox? renderBox = context.findRenderObject() as RenderBox?;
+    // // var size = renderBox.size;
+    // var offset = renderBox!.localToGlobal(Offset.zero);
+    return OverlayEntry(
+        builder: (context) => Positioned(
+                child: Bubble(
+              margin: BubbleEdges.only(top: 5),
+              alignment: Alignment.center,
+              nip: BubbleNip.leftCenter,
+              child: Text('Unverified - Test'),
+            )
+                // top: offset.dx,
+                // left: offset.dy,
+                ));
+  }
+
+  // void calculateSizeAndPosition() =>
+  //     WidgetsBinding.instance!.addPostFrameCallback((_) {
+  //       final RenderObject? box =
+  //           keyUnverified.currentContext!.findRenderObject();
+  //       var translation = box?.getTransformTo(null).getTranslation();
+  //       setState(() {
+  //         positionUnverified = Offset(translation!.x, translation.y);
+  //         // sizeUnverified = box.size;
+  //       });
+  //     });
 
   void _onItemTapped(int index) {
     setState(() {
@@ -620,10 +844,15 @@ class _MyStatefulWidget extends State<MyStatefulWidget> {
     });
   }
 
+  // void initState() {
+  //   super.initState();
+  //   calculateSizeAndPosition();
+  // }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: appbar,
+      appBar: (_selectedIndex == 0) ? appbarBeds : appbarLeads,
       body: Center(
         child: _buildList(),
       ),
