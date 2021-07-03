@@ -83,7 +83,7 @@ class LeadsData {
   }
   Map<String, dynamic> toJson() {
     return {
-      "name": this.leadCity,
+      "name": this.leadName,
       "city": this.leadCity,
       "status": this.status,
       "phone-number": this.phoneNumber,
@@ -505,15 +505,34 @@ class _MyStatefulWidget extends State<MyStatefulWidget> {
                                                         color: Colors.green,
                                                         size: 50,
                                                       ),
-                                                      onPressed: () {
-                                                        // ! change the code here to update firebase
-                                                        final snackBar = SnackBar(
-                                                            content: Text(
-                                                                'Yay! A SnackBar!'));
-                                                        ScaffoldMessenger.of(
-                                                                context)
-                                                            .showSnackBar(
-                                                                snackBar);
+                                                      onPressed: () async {
+                                                        // * verified button
+                                                        LeadsData data = LeadsData(
+                                                            snapshot2.data
+                                                                    .docs[index]
+                                                                ['name'],
+                                                            snapshot2.data
+                                                                    .docs[index]
+                                                                ['city'],
+                                                            'verified',
+                                                            snapshot2.data
+                                                                    .docs[index]
+                                                                ['type'],
+                                                            snapshot2.data
+                                                                .docs[index].id,
+                                                            snapshot2.data
+                                                                    .docs[index]
+                                                                [
+                                                                'phone-number']);
+                                                        await FirebaseFirestore
+                                                            .instance
+                                                            .collection('test')
+                                                            .doc('leads')
+                                                            .collection('data')
+                                                            .doc(data.docID)
+                                                            .set(data.toJson());
+                                                        Navigator.of(context)
+                                                            .pop();
                                                       },
                                                     ),
                                                     IconButton(
@@ -522,15 +541,34 @@ class _MyStatefulWidget extends State<MyStatefulWidget> {
                                                         color: Colors.amber,
                                                         size: 50.0,
                                                       ),
-                                                      onPressed: () {
-                                                        // ! change the code here to update firebase
-                                                        final snackBar = SnackBar(
-                                                            content: Text(
-                                                                'Yay! A SnackBar!'));
-                                                        ScaffoldMessenger.of(
-                                                                context)
-                                                            .showSnackBar(
-                                                                snackBar);
+                                                      onPressed: () async {
+                                                        // * unverified button
+                                                        LeadsData data = LeadsData(
+                                                            snapshot2.data
+                                                                    .docs[index]
+                                                                ['name'],
+                                                            snapshot2.data
+                                                                    .docs[index]
+                                                                ['city'],
+                                                            'unverified',
+                                                            snapshot2.data
+                                                                    .docs[index]
+                                                                ['type'],
+                                                            snapshot2.data
+                                                                .docs[index].id,
+                                                            snapshot2.data
+                                                                    .docs[index]
+                                                                [
+                                                                'phone-number']);
+                                                        await FirebaseFirestore
+                                                            .instance
+                                                            .collection('test')
+                                                            .doc('leads')
+                                                            .collection('data')
+                                                            .doc(data.docID)
+                                                            .set(data.toJson());
+                                                        Navigator.of(context)
+                                                            .pop();
                                                       },
                                                     ),
                                                     IconButton(
@@ -539,15 +577,34 @@ class _MyStatefulWidget extends State<MyStatefulWidget> {
                                                         color: Colors.red,
                                                         size: 50.0,
                                                       ),
-                                                      onPressed: () {
-                                                        // ! change the code here to update firebase
-                                                        final snackBar = SnackBar(
-                                                            content: Text(
-                                                                'Yay! A SnackBar!'));
-                                                        ScaffoldMessenger.of(
-                                                                context)
-                                                            .showSnackBar(
-                                                                snackBar);
+                                                      onPressed: () async {
+                                                        // * dead button
+                                                        LeadsData data = LeadsData(
+                                                            snapshot2.data
+                                                                    .docs[index]
+                                                                ['name'],
+                                                            snapshot2.data
+                                                                    .docs[index]
+                                                                ['city'],
+                                                            'dead',
+                                                            snapshot2.data
+                                                                    .docs[index]
+                                                                ['type'],
+                                                            snapshot2.data
+                                                                .docs[index].id,
+                                                            snapshot2.data
+                                                                    .docs[index]
+                                                                [
+                                                                'phone-number']);
+                                                        await FirebaseFirestore
+                                                            .instance
+                                                            .collection('test')
+                                                            .doc('leads')
+                                                            .collection('data')
+                                                            .doc(data.docID)
+                                                            .set(data.toJson());
+                                                        Navigator.of(context)
+                                                            .pop();
                                                       },
                                                     ),
                                                   ],
@@ -577,15 +634,41 @@ class _MyStatefulWidget extends State<MyStatefulWidget> {
                                                             color: Colors.green,
                                                             size: 50,
                                                           ),
-                                                          onPressed: () {
-                                                            // ! change the code here to update firebase
-                                                            final snackBar = SnackBar(
-                                                                content: Text(
-                                                                    'Yay! A SnackBar!'));
-                                                            ScaffoldMessenger
-                                                                    .of(context)
-                                                                .showSnackBar(
-                                                                    snackBar);
+                                                          onPressed: () async {
+                                                            // * verified button
+                                                            LeadsData data = LeadsData(
+                                                                snapshot2.data
+                                                                        .docs[index]
+                                                                    ['name'],
+                                                                snapshot2.data
+                                                                            .docs[
+                                                                        index]
+                                                                    ['city'],
+                                                                'verified',
+                                                                snapshot2.data
+                                                                            .docs[
+                                                                        index]
+                                                                    ['type'],
+                                                                snapshot2
+                                                                    .data
+                                                                    .docs[index]
+                                                                    .id,
+                                                                snapshot2.data
+                                                                            .docs[
+                                                                        index]
+                                                                    ['phone-number']);
+                                                            await FirebaseFirestore
+                                                                .instance
+                                                                .collection(
+                                                                    'test')
+                                                                .doc('leads')
+                                                                .collection(
+                                                                    'data')
+                                                                .doc(data.docID)
+                                                                .set(data
+                                                                    .toJson());
+                                                            Navigator.of(context)
+                                                            .pop();
                                                           },
                                                         ),
                                                         IconButton(
@@ -594,15 +677,41 @@ class _MyStatefulWidget extends State<MyStatefulWidget> {
                                                             color: Colors.amber,
                                                             size: 50.0,
                                                           ),
-                                                          onPressed: () {
-                                                            // ! change the code here to update firebase
-                                                            final snackBar = SnackBar(
-                                                                content: Text(
-                                                                    'Yay! A SnackBar!'));
-                                                            ScaffoldMessenger
-                                                                    .of(context)
-                                                                .showSnackBar(
-                                                                    snackBar);
+                                                          onPressed: () async {
+                                                            // * unverified button
+                                                            LeadsData data = LeadsData(
+                                                                snapshot2.data
+                                                                        .docs[index]
+                                                                    ['name'],
+                                                                snapshot2.data
+                                                                            .docs[
+                                                                        index]
+                                                                    ['city'],
+                                                                'unverified',
+                                                                snapshot2.data
+                                                                            .docs[
+                                                                        index]
+                                                                    ['type'],
+                                                                snapshot2
+                                                                    .data
+                                                                    .docs[index]
+                                                                    .id,
+                                                                snapshot2.data
+                                                                            .docs[
+                                                                        index]
+                                                                    ['phone-number']);
+                                                            await FirebaseFirestore
+                                                                .instance
+                                                                .collection(
+                                                                    'test')
+                                                                .doc('leads')
+                                                                .collection(
+                                                                    'data')
+                                                                .doc(data.docID)
+                                                                .set(data
+                                                                    .toJson());
+                                                            Navigator.of(context)
+                                                            .pop();
                                                           },
                                                         ),
                                                         IconButton(
@@ -611,15 +720,41 @@ class _MyStatefulWidget extends State<MyStatefulWidget> {
                                                             color: Colors.red,
                                                             size: 50.0,
                                                           ),
-                                                          onPressed: () {
-                                                            // ! change the code here to update firebase
-                                                            final snackBar = SnackBar(
-                                                                content: Text(
-                                                                    'Yay! A SnackBar!'));
-                                                            ScaffoldMessenger
-                                                                    .of(context)
-                                                                .showSnackBar(
-                                                                    snackBar);
+                                                          onPressed: () async {
+                                                            // * dead button
+                                                            LeadsData data = LeadsData(
+                                                                snapshot2.data
+                                                                        .docs[index]
+                                                                    ['name'],
+                                                                snapshot2.data
+                                                                            .docs[
+                                                                        index]
+                                                                    ['city'],
+                                                                'dead',
+                                                                snapshot2.data
+                                                                            .docs[
+                                                                        index]
+                                                                    ['type'],
+                                                                snapshot2
+                                                                    .data
+                                                                    .docs[index]
+                                                                    .id,
+                                                                snapshot2.data
+                                                                            .docs[
+                                                                        index]
+                                                                    ['phone-number']);
+                                                            await FirebaseFirestore
+                                                                .instance
+                                                                .collection(
+                                                                    'test')
+                                                                .doc('leads')
+                                                                .collection(
+                                                                    'data')
+                                                                .doc(data.docID)
+                                                                .set(data
+                                                                    .toJson());
+                                                            Navigator.of(context)
+                                                            .pop();
                                                           },
                                                         ),
                                                       ],
@@ -648,15 +783,41 @@ class _MyStatefulWidget extends State<MyStatefulWidget> {
                                                             color: Colors.green,
                                                             size: 50,
                                                           ),
-                                                          onPressed: () {
-                                                            // ! change the code here to update firebase
-                                                            final snackBar = SnackBar(
-                                                                content: Text(
-                                                                    'Yay! A SnackBar!'));
-                                                            ScaffoldMessenger
-                                                                    .of(context)
-                                                                .showSnackBar(
-                                                                    snackBar);
+                                                          onPressed: () async {
+                                                            // * verified button
+                                                            LeadsData data = LeadsData(
+                                                                snapshot2.data
+                                                                        .docs[index]
+                                                                    ['name'],
+                                                                snapshot2.data
+                                                                            .docs[
+                                                                        index]
+                                                                    ['city'],
+                                                                'verified',
+                                                                snapshot2.data
+                                                                            .docs[
+                                                                        index]
+                                                                    ['type'],
+                                                                snapshot2
+                                                                    .data
+                                                                    .docs[index]
+                                                                    .id,
+                                                                snapshot2.data
+                                                                            .docs[
+                                                                        index]
+                                                                    ['phone-number']);
+                                                            await FirebaseFirestore
+                                                                .instance
+                                                                .collection(
+                                                                    'test')
+                                                                .doc('leads')
+                                                                .collection(
+                                                                    'data')
+                                                                .doc(data.docID)
+                                                                .set(data
+                                                                    .toJson());
+                                                            Navigator.of(context)
+                                                            .pop();
                                                           },
                                                         ),
                                                         IconButton(
@@ -665,15 +826,41 @@ class _MyStatefulWidget extends State<MyStatefulWidget> {
                                                             color: Colors.amber,
                                                             size: 50.0,
                                                           ),
-                                                          onPressed: () {
-                                                            // ! change the code here to update firebase
-                                                            final snackBar = SnackBar(
-                                                                content: Text(
-                                                                    'Yay! A SnackBar!'));
-                                                            ScaffoldMessenger
-                                                                    .of(context)
-                                                                .showSnackBar(
-                                                                    snackBar);
+                                                          onPressed: () async {
+                                                            // * unverified button
+                                                            LeadsData data = LeadsData(
+                                                                snapshot2.data
+                                                                        .docs[index]
+                                                                    ['name'],
+                                                                snapshot2.data
+                                                                            .docs[
+                                                                        index]
+                                                                    ['city'],
+                                                                'unverified',
+                                                                snapshot2.data
+                                                                            .docs[
+                                                                        index]
+                                                                    ['type'],
+                                                                snapshot2
+                                                                    .data
+                                                                    .docs[index]
+                                                                    .id,
+                                                                snapshot2.data
+                                                                            .docs[
+                                                                        index]
+                                                                    ['phone-number']);
+                                                            await FirebaseFirestore
+                                                                .instance
+                                                                .collection(
+                                                                    'test')
+                                                                .doc('leads')
+                                                                .collection(
+                                                                    'data')
+                                                                .doc(data.docID)
+                                                                .set(data
+                                                                    .toJson());
+                                                            Navigator.of(context)
+                                                            .pop();
                                                           },
                                                         ),
                                                         IconButton(
@@ -682,15 +869,41 @@ class _MyStatefulWidget extends State<MyStatefulWidget> {
                                                             color: Colors.red,
                                                             size: 50.0,
                                                           ),
-                                                          onPressed: () {
-                                                            // ! change the code here to update firebase
-                                                            final snackBar = SnackBar(
-                                                                content: Text(
-                                                                    'Yay! A SnackBar!'));
-                                                            ScaffoldMessenger
-                                                                    .of(context)
-                                                                .showSnackBar(
-                                                                    snackBar);
+                                                          onPressed: () async {
+                                                            // * dead button
+                                                            LeadsData data = LeadsData(
+                                                                snapshot2.data
+                                                                        .docs[index]
+                                                                    ['name'],
+                                                                snapshot2.data
+                                                                            .docs[
+                                                                        index]
+                                                                    ['city'],
+                                                                'dead',
+                                                                snapshot2.data
+                                                                            .docs[
+                                                                        index]
+                                                                    ['type'],
+                                                                snapshot2
+                                                                    .data
+                                                                    .docs[index]
+                                                                    .id,
+                                                                snapshot2.data
+                                                                            .docs[
+                                                                        index]
+                                                                    ['phone-number']);
+                                                            await FirebaseFirestore
+                                                                .instance
+                                                                .collection(
+                                                                    'test')
+                                                                .doc('leads')
+                                                                .collection(
+                                                                    'data')
+                                                                .doc(data.docID)
+                                                                .set(data
+                                                                    .toJson());
+                                                            Navigator.of(context)
+                                                            .pop();
                                                           },
                                                         ),
                                                       ],
