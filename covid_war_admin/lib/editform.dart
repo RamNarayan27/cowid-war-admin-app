@@ -195,9 +195,6 @@ class EditFormState extends State<EditForm> {
                       .set(hdata.toJson());
 
                   Navigator.pop(context);
-
-                  // Navigator.push(context,
-                  //     MaterialPageRoute(builder: (context) => MyApp()));
                 },
                 child: Text('Submit'),
               )

@@ -1,8 +1,4 @@
-// todo : add a search functionality based on hospital
-
 import 'package:bubble/bubble.dart';
-// import 'package:super_tooltip/super_tooltip.dart';
-// import 'package:simple_tooltip/simple_tooltip.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -111,13 +107,7 @@ class MyStatefulWidget extends StatefulWidget {
 
 class _MyStatefulWidget extends State<MyStatefulWidget> {
   int _selectedIndex = 0;
-  // final entries = <String>['Apollo', 'Billroth', 'Jaruko'];
-  // final entries2 = <String>['dlsfjasdf', 'adfasfasfda', 'asdlfhas;dfasf'];
-  // final List<int> colorCodes2 = <int>[600, 500, 100];
   final keyUnverified = GlobalKey();
-  // final keyVerified = GlobalKey();
-  // final keyDead = GlobalKey();
-  // late Size sizeUnverified;
   Offset? positionUnverified;
   List<int> selectedItemsBeds = [];
   List<int> selectedItemsLeads = [];
@@ -138,6 +128,7 @@ class _MyStatefulWidget extends State<MyStatefulWidget> {
             .collection('data')
             .snapshots(),
         builder: (context, AsyncSnapshot snapshot1) {
+          developer.log('inside beds builder', name: 'beds');
           if (!snapshot1.hasData) return const Text('Loading...');
           return ListView.builder(
               padding: const EdgeInsets.all(0),
@@ -145,7 +136,6 @@ class _MyStatefulWidget extends State<MyStatefulWidget> {
               itemBuilder: (BuildContext context, int index) {
                 return InkWell(
                   onLongPress: () {
-                    // add the widget to the list here
                     setState(() {
                       selectedItemsBeds.add(index);
                       bedsSwitcher = true;
@@ -156,7 +146,6 @@ class _MyStatefulWidget extends State<MyStatefulWidget> {
                             IconButton(
                               icon: Icon(Icons.delete),
                               onPressed: () {
-                                //delete firebase entry here
                                 selectedItemsBeds.forEach((element) async {
                                   await FirebaseFirestore.instance
                                       .runTransaction(
@@ -164,10 +153,6 @@ class _MyStatefulWidget extends State<MyStatefulWidget> {
                                     await myTransaction.delete(
                                         snapshot1.data.docs[element].reference);
                                   });
-                                  // final snackBar =
-                                  //     SnackBar(content: Text('${element}'));
-                                  // ScaffoldMessenger.of(context)
-                                  //     .showSnackBar(snackBar);
                                   developer.log(element.toString(),
                                       name: 'deleted entry');
                                 });
@@ -369,7 +354,6 @@ class _MyStatefulWidget extends State<MyStatefulWidget> {
               itemBuilder: (BuildContext context, int index) {
                 return InkWell(
                     onLongPress: () {
-                      // add the widget to the list here
                       setState(() {
                         selectedItemsLeads.add(index);
                         leadsSwitcher = true;
@@ -380,15 +364,6 @@ class _MyStatefulWidget extends State<MyStatefulWidget> {
                               IconButton(
                                 icon: Icon(Icons.delete),
                                 onPressed: () {
-                                  // ! todo : delete from firebase here
-                                  //delete firebase entry here
-                                  // selectedItemsBeds.forEach((element) async {
-                                  //   await FirebaseFirestore.instance
-                                  //       .runTransaction(
-                                  //           (Transaction myTransaction) async {
-                                  //     await myTransaction.delete(
-                                  //         snapshot.data.docs[element].reference);
-                                  //   });
                                   selectedItemsLeads.forEach((element) async {
                                     await FirebaseFirestore.instance
                                         .runTransaction(
@@ -396,10 +371,6 @@ class _MyStatefulWidget extends State<MyStatefulWidget> {
                                       await myTransaction.delete(snapshot2
                                           .data.docs[element].reference);
                                     });
-                                    // final snackBar =
-                                    //     SnackBar(content: Text('${element}'));
-                                    // ScaffoldMessenger.of(context)
-                                    //     .showSnackBar(snackBar);
                                     developer.log(element.toString(),
                                         name: 'deleted entry');
                                   });
@@ -419,9 +390,6 @@ class _MyStatefulWidget extends State<MyStatefulWidget> {
                           );
                         }
                       });
-                      // final snackBar =
-                      //     SnackBar(content: Text('Yay! A SnackBar!'));
-                      // ScaffoldMessenger.of(context).showSnackBar(snackBar);
                       developer.log(selectedItemsLeads.toString(),
                           name: 'onlongpress works');
                     },
@@ -438,10 +406,6 @@ class _MyStatefulWidget extends State<MyStatefulWidget> {
                                   onTap: () {
                                     setState(() {
                                       selectedItemsLeads.remove(index);
-                                      // final snackBar = SnackBar(
-                                      //     content: Text('Yay! A SnackBar!'));
-                                      // ScaffoldMessenger.of(context)
-                                      //     .showSnackBar(snackBar);
                                       developer.log(
                                           selectedItemsLeads.toString(),
                                           name: 'ontap remove works');
@@ -458,8 +422,6 @@ class _MyStatefulWidget extends State<MyStatefulWidget> {
                                 child: ListTile(
                                   leading: Icon(
                                     Icons.people,
-                                    // color: Colors.red,
-                                    // size: 56.0,
                                   ),
                                   title:
                                       Text(snapshot2.data.docs[index]['name']),
@@ -468,10 +430,6 @@ class _MyStatefulWidget extends State<MyStatefulWidget> {
                                   onTap: () {
                                     setState(() {
                                       selectedItemsLeads.add(index);
-                                      // final snackBar = SnackBar(
-                                      //     content: Text('Yay! A SnackBar!'));
-                                      // ScaffoldMessenger.of(context)
-                                      //     .showSnackBar(snackBar);
                                       developer.log(
                                           selectedItemsLeads.toString(),
                                           name: 'ontap add works');
@@ -667,8 +625,9 @@ class _MyStatefulWidget extends State<MyStatefulWidget> {
                                                                 .doc(data.docID)
                                                                 .set(data
                                                                     .toJson());
-                                                            Navigator.of(context)
-                                                            .pop();
+                                                            Navigator.of(
+                                                                    context)
+                                                                .pop();
                                                           },
                                                         ),
                                                         IconButton(
@@ -710,8 +669,9 @@ class _MyStatefulWidget extends State<MyStatefulWidget> {
                                                                 .doc(data.docID)
                                                                 .set(data
                                                                     .toJson());
-                                                            Navigator.of(context)
-                                                            .pop();
+                                                            Navigator.of(
+                                                                    context)
+                                                                .pop();
                                                           },
                                                         ),
                                                         IconButton(
@@ -753,8 +713,9 @@ class _MyStatefulWidget extends State<MyStatefulWidget> {
                                                                 .doc(data.docID)
                                                                 .set(data
                                                                     .toJson());
-                                                            Navigator.of(context)
-                                                            .pop();
+                                                            Navigator.of(
+                                                                    context)
+                                                                .pop();
                                                           },
                                                         ),
                                                       ],
@@ -816,8 +777,9 @@ class _MyStatefulWidget extends State<MyStatefulWidget> {
                                                                 .doc(data.docID)
                                                                 .set(data
                                                                     .toJson());
-                                                            Navigator.of(context)
-                                                            .pop();
+                                                            Navigator.of(
+                                                                    context)
+                                                                .pop();
                                                           },
                                                         ),
                                                         IconButton(
@@ -859,8 +821,9 @@ class _MyStatefulWidget extends State<MyStatefulWidget> {
                                                                 .doc(data.docID)
                                                                 .set(data
                                                                     .toJson());
-                                                            Navigator.of(context)
-                                                            .pop();
+                                                            Navigator.of(
+                                                                    context)
+                                                                .pop();
                                                           },
                                                         ),
                                                         IconButton(
@@ -902,8 +865,9 @@ class _MyStatefulWidget extends State<MyStatefulWidget> {
                                                                 .doc(data.docID)
                                                                 .set(data
                                                                     .toJson());
-                                                            Navigator.of(context)
-                                                            .pop();
+                                                            Navigator.of(
+                                                                    context)
+                                                                .pop();
                                                           },
                                                         ),
                                                       ],
@@ -1012,9 +976,6 @@ class _MyStatefulWidget extends State<MyStatefulWidget> {
   }
 
   OverlayEntry createOverLayEntry() {
-    // RenderBox? renderBox = context.findRenderObject() as RenderBox?;
-    // // var size = renderBox.size;
-    // var offset = renderBox!.localToGlobal(Offset.zero);
     return OverlayEntry(
         builder: (context) => Positioned(
                 child: Bubble(
@@ -1022,22 +983,9 @@ class _MyStatefulWidget extends State<MyStatefulWidget> {
               alignment: Alignment.center,
               nip: BubbleNip.leftCenter,
               child: Text('Unverified - Test'),
-            )
-                // top: offset.dx,
-                // left: offset.dy,
+            )l̥
                 ));
   }
-
-  // void calculateSizeAndPosition() =>
-  //     WidgetsBinding.instance!.addPostFrameCallback((_) {
-  //       final RenderObject? box =
-  //           keyUnverified.currentContext!.findRenderObject();
-  //       var translation = box?.getTransformTo(null).getTranslation();
-  //       setState(() {
-  //         positionUnverified = Offset(translation!.x, translation.y);
-  //         // sizeUnverified = box.size;
-  //       });
-  //     });
 
   void _onItemTapped(int index) {
     setState(() {
@@ -1056,11 +1004,6 @@ class _MyStatefulWidget extends State<MyStatefulWidget> {
       }
     });
   }
-
-  // void initState() {
-  //   super.initState();
-  //   calculateSizeAndPosition();
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -1087,7 +1030,7 @@ class _MyStatefulWidget extends State<MyStatefulWidget> {
           ),
         ],
         currentIndex: _selectedIndex,
-        selectedItemColor: Colors.amber[800], //todo : change it to the
+        selectedItemColor: Colors.amber[800],
         onTap: _onItemTapped,
       ),
     );

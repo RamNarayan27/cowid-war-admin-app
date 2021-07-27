@@ -180,10 +180,6 @@ class EditLeadState extends State<EditLead> {
                 padding: EdgeInsets.only(top: 16, left: 8, right: 8, bottom: 8),
                 child: ElevatedButton(
                   onPressed: () async {
-                    // todo : add to firebase here
-                    // final snackBar =
-                    //     SnackBar(content: Text(statusDropDownValue!));
-                    // ScaffoldMessenger.of(context).showSnackBar(snackBar);
                     ldata.leadCity = cityDropDownValue;
                     ldata.leadName = leadNameController.text;
                     ldata.phoneNumber = int.parse(phoneNumberController.text);
